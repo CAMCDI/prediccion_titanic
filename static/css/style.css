@@ -1,0 +1,96 @@
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #f7f1f7;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #fafafc;
+    padding: 25px 35px;
+    border-radius: 25px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 360px;
+    border: 2px solid #e6d5f7;
+}
+
+h1 {
+    color: #a26bce;
+    margin-bottom: 10px;
+}
+
+.desc {
+    color: #777;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    font-size: 0.9em;
+    color: #444;
+}
+
+input, select {
+    padding: 7px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #fffafc;
+    font-size: 0.9em;
+    transition: 0.3s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #b486d9;
+    box-shadow: 0 0 5px #b486d9;
+}
+
+button {
+    background: linear-gradient(90deg, #b486d9, #a3d9b4);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.ocean {
+    position: relative;
+    background: linear-gradient(180deg, #cce5f3 0%, #91b9e1 100%);
+    border-radius: 15px;
+    height: 80px;
+    margin-top: 25px;
+    overflow: hidden;
+}
+
+#ship {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    font-size: 2em;
+    transition: left 3s linear, top 1s ease-in-out;
+}
+
+#resultText {
+    margin-top: 20px;
+    font-size: 1.3em;
+    font-weight: bold;
+}

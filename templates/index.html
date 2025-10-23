@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>🛳️ Simulador del Titanic</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🛳️ Simulador del Titanic</h1>
+
+        <form id="titanicForm" class="form">
+            <label>Clase:</label>
+            <select name="Pclass" required>
+                <option value="1">Primera</option>
+                <option value="2">Segunda</option>
+                <option value="3">Tercera</option>
+            </select>
+
+            <label>Sexo:</label>
+            <select name="Sex" required>
+                <option value="male">Hombre</option>
+                <option value="female">Mujer</option>
+            </select>
+
+            <label>Edad:</label>
+            <input type="number" step="0.1" name="Age" required>
+
+            <label>Hermanos / Pareja a bordo:</label>
+            <input type="number" name="SibSp" required>
+
+            <label>Padres / Hijos a bordo:</label>
+            <input type="number" name="Parch" required>
+
+            <label>Tarifa (Fare):</label>
+            <input type="number" step="0.01" name="Fare" required>
+
+            <label>Puerto de embarque:</label>
+            <select name="Embarked" required>
+                <option value="S">Southampton</option>
+                <option value="C">Cherbourg</option>
+                <option value="Q">Queenstown</option>
+            </select>
+
+            <label>Título:</label>
+            <select name="Title" required>
+                <option value="Mr">Mr</option>
+                <option value="Mrs">Mrs</option>
+                <option value="Miss">Miss</option>
+                <option value="Master">Master</option>
+                <option value="Dr">Dr</option>
+            </select>
+
+            <label>¿Viaja solo?</label>
+            <select name="IsAlone" required>
+                <option value="1">Sí</option>
+                <option value="0">No</option>
+            </select>
+
+            <button type="submit">🌊 Simular</button>
+        </form>
+
+        <div class="ocean">
+            <div id="ship">🚢</div>
+        </div>
+
+        <h2 id="resultText"></h2>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
