@@ -1,20 +1,17 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, conint
 import pandas as pd
 import joblib
-import os
-
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.linear_model import LogisticRegression
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="API Predicción Titanic")
 
-# ---------------------------
-# CORS
-# ---------------------------
+# Montar carpeta de archivos estáticos
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Permitir CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,94 +20,64 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---------------------------
-# Servir archivos estáticos
-# ---------------------------
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Cargar modelos
+model = joblib.load("models/model_titanic.pkl")
+scaler = joblib.load("models/scaler.pkl")
+le_sex = joblib.load("models/le_sex.pkl")
+le_embarked = joblib.load("models/le_embarked.pkl")
+le_title = joblib.load("models/le_title.pkl")
 
-# ---------------------------
-# Cargar modelo y objetos
-# ---------------------------
-MODEL_PATH = "models/model_titanic.pkl"
-SCALER_PATH = "models/scaler.pkl"
-LE_SEX_PATH = "models/le_sex.pkl"
-LE_EMB_PATH = "models/le_embarked.pkl"
-LE_TITLE_PATH = "models/le_title.pkl"
-
-if not all(os.path.exists(p) for p in [MODEL_PATH, SCALER_PATH, LE_SEX_PATH, LE_EMB_PATH, LE_TITLE_PATH]):
-    df = pd.read_csv("dataset/train.csv")
-    df["FamilySize"] = df["SibSp"] + df["Parch"] + 1
-    df["IsAlone"] = (df["FamilySize"] == 1).astype(int)
-    df["Title"] = df["Name"].str.extract(r' ([A-Za-z]+)\.', expand=False)
-
-    df["Age"].fillna(df["Age"].median(), inplace=True)
-    df["Fare"].fillna(df["Fare"].median(), inplace=True)
-    df["Embarked"].fillna(df["Embarked"].mode()[0], inplace=True)
-
-    cols_to_use = ["Pclass","Sex","Age","SibSp","Parch","Fare",
-                   "Embarked","FamilySize","IsAlone","Title"]
-    X = df[cols_to_use]
-    y = df["Survived"]
-
-    le_sex = LabelEncoder().fit(X["Sex"])
-    le_embarked = LabelEncoder().fit(X["Embarked"])
-    le_title = LabelEncoder().fit(X["Title"])
-
-    X["Sex"] = le_sex.transform(X["Sex"])
-    X["Embarked"] = le_embarked.transform(X["Embarked"])
-    X["Title"] = le_title.transform(X["Title"])
-
-    scaler = StandardScaler().fit(X)
-    X_scaled = scaler.transform(X)
-
-    model = LogisticRegression(max_iter=1000).fit(X_scaled, y)
-
-    joblib.dump(model, MODEL_PATH)
-    joblib.dump(scaler, SCALER_PATH)
-    joblib.dump(le_sex, LE_SEX_PATH)
-    joblib.dump(le_embarked, LE_EMB_PATH)
-    joblib.dump(le_title, LE_TITLE_PATH)
-else:
-    model = joblib.load(MODEL_PATH)
-    scaler = joblib.load(SCALER_PATH)
-    le_sex = joblib.load(LE_SEX_PATH)
-    le_embarked = joblib.load(LE_EMB_PATH)
-    le_title = joblib.load(LE_TITLE_PATH)
-
-# ---------------------------
-# Modelo de entrada
-# ---------------------------
+# Modelo de datos con validación estricta (solo enteros donde corresponde)
 class Passenger(BaseModel):
-    Pclass: int
+    Pclass: conint(ge=1, le=3)       # 1, 2 o 3
     Sex: str
-    Age: float
-    SibSp: int
-    Parch: int
-    Fare: float
+    Age: conint(ge=1, le=100)         # solo enteros entre 1 y 80
+    SibSp: conint(ge=0, le=8)
+    Parch: conint(ge=0, le=6)
+    Fare: conint() = None             # se asignará automáticamente
     Embarked: str
-    FamilySize: int
-    IsAlone: int
+    FamilySize: conint(ge=1) = None   # calculado automáticamente
+    IsAlone: conint(ge=0, le=1) = None
     Title: str
 
-# ---------------------------
-# Rutas
-# ---------------------------
+# Página principal
 @app.get("/")
 def home():
     return FileResponse("templates/index.html")
 
+# Predicción
 @app.post("/predict")
 def predict_survival(passenger: Passenger):
+    # Asignar tarifa automáticamente según la clase
+    fares_by_class = {1: 512, 2: 100, 3: 50}
+    passenger.Fare = fares_by_class[passenger.Pclass]
+
+    # Calcular FamilySize e IsAlone
+    passenger.FamilySize = passenger.SibSp + passenger.Parch + 1
+    passenger.IsAlone = 1 if passenger.FamilySize == 1 else 0
+
+    # Crear dataframe
     data = pd.DataFrame([passenger.dict()])
 
+    # Transformar categorías
     try:
         data["Sex"] = le_sex.transform(data["Sex"])
         data["Embarked"] = le_embarked.transform(data["Embarked"])
         data["Title"] = le_title.transform(data["Title"])
     except ValueError as e:
-        return {"error": f"Valor no reconocido: {e}"}
+        raise HTTPException(status_code=400, detail=f"Valor no reconocido: {e}")
 
-    data_scaled = scaler.transform(data)
-    pred = model.predict(data_scaled)[0]
-    resultado = "Sobrevive ✅" if pred == 1 else "No sobrevive ❌"
+    # Escalar y predecir
+    try:
+        data_scaled = scaler.transform(data)
+        pred = model.predict(data_scaled)[0]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error en predicción: {e}")
+
+    resultado = "🟢 Sobrevive" if pred == 1 else "🔴 No sobrevive"
     return {"prediction": resultado}
+
+# Permite correr localmente con recarga
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

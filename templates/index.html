@@ -24,16 +24,14 @@
             </select>
 
             <label>Edad:</label>
-            <input type="number" step="0.1" name="Age" required>
+            <input type="number" name="Age" min="0" max="100" step="1" required>
 
             <label>Hermanos / Pareja a bordo:</label>
-            <input type="number" name="SibSp" required>
-
+           <input type="number" name="SibSp" min="0" max="10" step="1" required>
+  
             <label>Padres / Hijos a bordo:</label>
-            <input type="number" name="Parch" required>
+            <input type="number" name="Parch" min="0" max="10" step="1" required>
 
-            <label>Tarifa (Fare):</label>
-            <input type="number" step="0.01" name="Fare" required>
 
             <label>Puerto de embarque:</label>
             <select name="Embarked" required>
@@ -57,12 +55,8 @@
                 <option value="0">No</option>
             </select>
 
-            <button type="submit">🌊 Simular</button>
+            <button type="submit">Simular</button>
         </form>
-
-        <div class="ocean">
-            <div id="ship">🚢</div>
-        </div>
 
         <h2 id="resultText"></h2>
     </div>

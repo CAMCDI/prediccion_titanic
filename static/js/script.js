@@ -4,13 +4,22 @@ document.getElementById("titanicForm").addEventListener("submit", async (e) => {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-     data.Pclass = parseInt(data.Pclass);
-    data.Age = parseFloat(data.Age);
+    // Convertir valores numéricos
+    data.Pclass = parseInt(data.Pclass);
+    data.Age = Math.round(parseFloat(data.Age)); // solo enteros
     data.SibSp = parseInt(data.SibSp);
     data.Parch = parseInt(data.Parch);
-    data.Fare = parseFloat(data.Fare);
     data.IsAlone = parseInt(data.IsAlone);
     data.FamilySize = data.SibSp + data.Parch + 1;
+
+    // Asignar tarifa automáticamente según la clase
+    const fareMap = {1: 512, 2: 73, 3: 0};
+    data.Fare = fareMap[data.Pclass];
+
+    // Validaciones simples
+    if (data.Age < 0 || data.Age > 100) { alert("Edad inválida. Debe estar entre 0 y 100 años."); return; }
+    if (data.SibSp < 0 || data.SibSp > 10) { alert("Número de hermanos/pareja inválido."); return; }
+    if (data.Parch < 0 || data.Parch > 10) { alert("Número de padres/hijos inválido."); return; }
 
     const res = await fetch("/predict", {
         method: "POST",
@@ -19,23 +28,12 @@ document.getElementById("titanicForm").addEventListener("submit", async (e) => {
     });
 
     const result = await res.json();
-    const text = document.getElementById("resultText");
-    const ship = document.getElementById("ship");
+    const resultText = document.getElementById("resultText");
 
-    if (result.prediction) {
-        text.textContent = result.prediction;
-
-        if (result.prediction.includes("Sobrevive")) {
-            ship.style.left = "85%";
-            ship.style.top = "20px";
-            text.style.color = "#6abf69";
-        } else {
-            ship.style.left = "45%";
-            ship.style.top = "60px";
-            text.style.color = "#d64c4c";
-        }
-    } else {
-        text.textContent = "Error en la predicción.";
-        text.style.color = "gray";
-    }
+    // Animación solo para el resultado
+    resultText.style.opacity = 0;   // fade out
+    setTimeout(() => {
+        resultText.textContent = result.prediction || result.detail;
+        resultText.style.opacity = 1; // fade in
+    }, 200);
 });

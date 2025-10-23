@@ -72,25 +72,12 @@ button:hover {
     transform: scale(1.05);
 }
 
-.ocean {
-    position: relative;
-    background: linear-gradient(180deg, #cce5f3 0%, #91b9e1 100%);
-    border-radius: 15px;
-    height: 80px;
-    margin-top: 25px;
-    overflow: hidden;
-}
-
-#ship {
-    position: absolute;
-    top: 20px;
-    left: 0;
-    font-size: 2em;
-    transition: left 3s linear, top 1s ease-in-out;
-}
-
 #resultText {
     margin-top: 20px;
     font-size: 1.3em;
     font-weight: bold;
+}
+
+#resultText {
+    transition: opacity 0.4s ease;
 }
