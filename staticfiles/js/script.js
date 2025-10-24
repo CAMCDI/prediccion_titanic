@@ -6,10 +6,9 @@ document.getElementById("titanicForm").addEventListener("submit", async (e) => {
 
     // Convertir valores numéricos
     data.Pclass = parseInt(data.Pclass);
-    data.Age = Math.round(parseFloat(data.Age)); // solo enteros
+    data.Age = Math.round(parseFloat(data.Age));
     data.SibSp = parseInt(data.SibSp);
     data.Parch = parseInt(data.Parch);
-    data.IsAlone = parseInt(data.IsAlone);
     data.FamilySize = data.SibSp + data.Parch + 1;
 
     // Asignar tarifa automáticamente según la clase
@@ -17,23 +16,27 @@ document.getElementById("titanicForm").addEventListener("submit", async (e) => {
     data.Fare = fareMap[data.Pclass];
 
     // Validaciones simples
-    if (data.Age < 0 || data.Age > 100) { alert("Edad inválida. Debe estar entre 0 y 100 años."); return; }
+    if (data.Age < 0 || data.Age > 100) { alert("Edad inválida."); return; }
     if (data.SibSp < 0 || data.SibSp > 10) { alert("Número de hermanos/pareja inválido."); return; }
     if (data.Parch < 0 || data.Parch > 10) { alert("Número de padres/hijos inválido."); return; }
 
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
     const res = await fetch("/predict/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken
+        },
         body: JSON.stringify(data),
     });
 
     const result = await res.json();
     const resultText = document.getElementById("resultText");
 
-    // Animación solo para el resultado
-    resultText.style.opacity = 0;   // fade out
+    resultText.style.opacity = 0;
     setTimeout(() => {
         resultText.textContent = result.prediction || result.detail;
-        resultText.style.opacity = 1; // fade in
+        resultText.style.opacity = 1;
     }, 200);
 });

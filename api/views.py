@@ -1,4 +1,3 @@
-# api/views.py
 from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,7 +13,8 @@ class PredictSurvivalView(APIView):
         serializer = PassengerSerializer(data=request.data)
         if serializer.is_valid():
             passenger = serializer.validated_data
-            # Lógica de cálculo
+
+            # Cálculos automáticos
             fares_by_class = {1: 512, 2: 73, 3: 0}
             passenger['Fare'] = fares_by_class[passenger['Pclass']]
             passenger['FamilySize'] = passenger['SibSp'] + passenger['Parch'] + 1

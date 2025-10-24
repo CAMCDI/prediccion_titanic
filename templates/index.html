@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>🛳️ Simulador del Titanic</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <div class="container">
         <h1>🛳️ Simulador del Titanic</h1>
 
-        <form id="titanicForm" class="form">
+        <form id="titanicForm" method="post">
+            {% csrf_token %}
+
             <label>Clase:</label>
             <select name="Pclass" required>
                 <option value="1">Primera</option>
@@ -27,11 +29,10 @@
             <input type="number" name="Age" min="0" max="100" step="1" required>
 
             <label>Hermanos / Pareja a bordo:</label>
-           <input type="number" name="SibSp" min="0" max="10" step="1" required>
-  
+            <input type="number" name="SibSp" min="0" max="10" step="1" required>
+
             <label>Padres / Hijos a bordo:</label>
             <input type="number" name="Parch" min="0" max="10" step="1" required>
-
 
             <label>Puerto de embarque:</label>
             <select name="Embarked" required>
@@ -49,18 +50,12 @@
                 <option value="Dr">Dr</option>
             </select>
 
-            <label>¿Viaja solo?</label>
-            <select name="IsAlone" required>
-                <option value="1">Sí</option>
-                <option value="0">No</option>
-            </select>
-
             <button type="submit">Simular</button>
         </form>
 
         <h2 id="resultText"></h2>
     </div>
 
-    <script src="/static/js/script.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
