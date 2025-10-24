@@ -1,5 +1,5 @@
 Django==5.2.7
-djangorestframework==3.20.1   # si sigues usando DRF para la API
+djangorestframework==3.20.0  # si sigues usando DRF para la API
 pandas==2.2.3
 scikit-learn==1.5.2
 joblib==1.4.2
