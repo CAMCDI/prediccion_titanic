@@ -21,7 +21,7 @@ document.getElementById("titanicForm").addEventListener("submit", async (e) => {
     if (data.SibSp < 0 || data.SibSp > 10) { alert("Número de hermanos/pareja inválido."); return; }
     if (data.Parch < 0 || data.Parch > 10) { alert("Número de padres/hijos inválido."); return; }
 
-    const res = await fetch("/predict/", {
+    const res = await fetch("/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
