@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-qdam@rq))mun+rp_oc+8p$o5^c)r=xs5-t!a4!vaf4n+m7b!3_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS =["prediccion-titanic-2.onrender.com"]
+
 
 
 # Application definition
