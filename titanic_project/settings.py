@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-tu-clave-secreta-aqui'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -81,23 +81,3 @@ from pathlib import Path
 
 # ... tus configuraciones actuales ...
 
-# Configuración para Render
-if 'RENDER' in os.environ:
-    # Configuración de seguridad para producción
-    DEBUG = False
-    ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
-    
-    # Configuración de archivos estáticos con WhiteNoise
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    
-    # Middleware para WhiteNoise
-    MIDDLEWARE = [
-        'django.middleware.security.SecurityMiddleware',
-        'whitenoise.middleware.WhiteNoiseMiddleware',  # ← AGREGAR ESTO
-        # ... el resto de tus middlewares ...
-    ]
-else:
-    # Configuración para desarrollo
-    DEBUG = True
-    ALLOWED_HOSTS = []
