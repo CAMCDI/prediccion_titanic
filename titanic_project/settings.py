@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-tu-clave-secreta-aqui'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -24,11 +24,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'titanic_app',  # ← AGREGAR ESTA LÍNEA
+    'titanic_app',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← AGREGAR SIEMPRE
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -42,7 +43,7 @@ ROOT_URLCONF = 'titanic_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # ← AGREGAR ESTA LÍNEA
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -57,7 +58,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'titanic_project.wsgi.application'
 
-# Database (no la usamos, puedes dejarla como está)
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -68,44 +69,37 @@ DATABASES = {
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # ← AGREGAR ESTO
-]
-
-# Para permitir CORS (como en FastAPI)
-CORS_ALLOW_ALL_ORIGINS = True
-
-# Configuración para archivos estáticos
-import os
-
-# Configuración base de archivos estáticos
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# Configuración para producción
+# Configuración para producción en Render
 if 'RENDER' in os.environ:
     DEBUG = False
     ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
     
-    # Configuración para archivos estáticos en producción
+    # Directorio donde se recogen los archivos estáticos para producción
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     
-    # Middleware para WhiteNoise (DEBE ser el primero después de SecurityMiddleware)
-    MIDDLEWARE = [
-        'django.middleware.security.SecurityMiddleware',
-        'whitenoise.middleware.WhiteNoiseMiddleware',  # ← ESTA LÍNEA
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
-        'django.contrib.auth.middleware.AuthenticationMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
-        'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    ]
-    
-    # Configuración de WhiteNoise
+    # Configuración de WhiteNoise para archivos estáticos
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    
+    # Para logging de errores
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        },
+    }
 else:
     DEBUG = True
     ALLOWED_HOSTS = []
 
+# Para permitir CORS
+CORS_ALLOW_ALL_ORIGINS = True
