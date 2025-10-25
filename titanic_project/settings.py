@@ -74,22 +74,27 @@ STATICFILES_DIRS = [
 # Para permitir CORS (como en FastAPI)
 CORS_ALLOW_ALL_ORIGINS = True
 
-
-# Configuración para producción en Render
+# Configuración para archivos estáticos
 import os
 
-# Configuración de archivos estáticos
+# Configuración base de archivos estáticos
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# Configuración para producción
 if 'RENDER' in os.environ:
     DEBUG = False
     ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
     
-    # Configuración para archivos estáticos
+    # Configuración para archivos estáticos en producción
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     
-    # Middleware para servir archivos estáticos
+    # Middleware para WhiteNoise (DEBE ser el primero después de SecurityMiddleware)
     MIDDLEWARE = [
         'django.middleware.security.SecurityMiddleware',
-        'whitenoise.middleware.WhiteNoiseMiddleware',  # ← AGREGAR ESTO
+        'whitenoise.middleware.WhiteNoiseMiddleware',  # ← ESTA LÍNEA
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
@@ -103,5 +108,4 @@ if 'RENDER' in os.environ:
 else:
     DEBUG = True
     ALLOWED_HOSTS = []
-
 
