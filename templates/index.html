@@ -2,60 +2,95 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>🛳️ Simulador del Titanic</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚢 Predicción Titanic </title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>🛳️ Simulador del Titanic</h1>
+        <div class="header">
+            <h1>🚢 Titanic Survival</h1>
+            <div class="wave"></div>
+        </div>
 
-        <form id="titanicForm" method="post">
-            {% csrf_token %}
+        <div class="form-container">
+            <form id="predictionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="Pclass"> Clase del Pasaje</label>
+                        <select id="Pclass" name="Pclass" required>
+                            <option value="">Selecciona tu clase</option>
+                            <option value="1">Primera Clase </option>
+                            <option value="2">Segunda Clase </option>
+                            <option value="3">Tercera Clase </option>
+                        </select>
+                    </div>
 
-            <label>Clase:</label>
-            <select name="Pclass" required>
-                <option value="1">Primera</option>
-                <option value="2">Segunda</option>
-                <option value="3">Tercera</option>
-            </select>
+                    <div class="form-group">
+                        <label for="Sex">Género</label>
+                        <select id="Sex" name="Sex" required>
+                            <option value="">Selecciona género</option>
+                            <option value="male">Hombre</option>
+                            <option value="female">Mujer</option>
+                        </select>
+                    </div>
 
-            <label>Sexo:</label>
-            <select name="Sex" required>
-                <option value="male">Hombre</option>
-                <option value="female">Mujer</option>
-            </select>
+                    <div class="form-group">
+                        <label for="Age">Edad</label>
+                        <input type="number" id="Age" name="Age" min="1" max="100" placeholder="Tu edad" required>
+                    </div>
 
-            <label>Edad:</label>
-            <input type="number" name="Age" min="0" max="100" step="1" required>
+                    <div class="form-group">
+                        <label for="SibSp">Hermanos/Esposa</label>
+                        <input type="number" id="SibSp" name="SibSp" min="0" max="8" placeholder="0" required>
+                    </div>
 
-            <label>Hermanos / Pareja a bordo:</label>
-            <input type="number" name="SibSp" min="0" max="10" step="1" required>
+                    <div class="form-group">
+                        <label for="Parch"> Padres/Hijos</label>
+                        <input type="number" id="Parch" name="Parch" min="0" max="6" placeholder="0" required>
+                    </div>
 
-            <label>Padres / Hijos a bordo:</label>
-            <input type="number" name="Parch" min="0" max="10" step="1" required>
+                    <div class="form-group">
+                        <label for="Embarked">⚓ Puerto de Embarque</label>
+                        <select id="Embarked" name="Embarked" required>
+                            <option value="">Selecciona puerto</option>
+                            <option value="C">Cherbourg </option>
+                            <option value="Q">Queenstown</option>
+                            <option value="S">Southampton </option>
+                        </select>
+                    </div>
 
-            <label>Puerto de embarque:</label>
-            <select name="Embarked" required>
-                <option value="S">Southampton</option>
-                <option value="C">Cherbourg</option>
-                <option value="Q">Queenstown</option>
-            </select>
+                    <div class="form-group">
+                        <label for="Title">Título</label>
+                        <select id="Title" name="Title" required>
+                            <option value="">Selecciona título</option>
+                            <option value="Mr">Señor</option>
+                            <option value="Mrs">Señora</option>
+                            <option value="Miss">Señorita</option>
+                            <option value="Master">Maestro</option>
+                            <option value="Dr">Doctor</option>
+                        </select>
+                    </div>
+                </div>
 
-            <label>Título:</label>
-            <select name="Title" required>
-                <option value="Mr">Mr</option>
-                <option value="Mrs">Mrs</option>
-                <option value="Miss">Miss</option>
-                <option value="Master">Master</option>
-                <option value="Dr">Dr</option>
-            </select>
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text">Predecir Destino</span>
+                    <div class="btn-loading" style="display: none;"> Calculando...</div>
+                </button>
+            </form>
+        </div>
 
-            <button type="submit">Simular</button>
-        </form>
+        <div id="result" class="result-container" style="display: none;">
+            <div class="result-card">
+                <h3> Tu Resultado</h3>
+                <div id="predictionText" class="prediction-text"></div>
+                <button onclick="resetForm()" class="reset-btn">Intentar Otra Vez</button>
+            </div>
+        </div>
 
-        <h2 id="resultText"></h2>
     </div>
 
-    <script src="{% static 'js/script.js' %}"></script>
+    <script src="/static/js/script.js"></script>
 </body>
 </html>
