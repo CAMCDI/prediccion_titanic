@@ -1,4 +1,3 @@
-import pandas as pd
 import joblib
 import json
 import os
@@ -59,29 +58,27 @@ class PredictView(View):
             family_size = data['SibSp'] + data['Parch'] + 1
             is_alone = 1 if family_size == 1 else 0
             
-            # Crear DataFrame para predicción
-            passenger_data = {
-                'Pclass': [data['Pclass']],
-                'Sex': [data['Sex']],
-                'Age': [data['Age']],
-                'SibSp': [data['SibSp']],
-                'Parch': [data['Parch']],
-                'Fare': [fare],
-                'Embarked': [data['Embarked']],
-                'FamilySize': [family_size],
-                'IsAlone': [is_alone],
-                'Title': [data['Title']]
-            }
+            # Transformar variables categóricas (sin pandas)
+            sex_encoded = le_sex.transform([data['Sex']])[0]
+            embarked_encoded = le_embarked.transform([data['Embarked']])[0]
+            title_encoded = le_title.transform([data['Title']])[0]
             
-            df = pd.DataFrame(passenger_data)
-            
-            # Transformar variables categóricas
-            df["Sex"] = le_sex.transform(df["Sex"])
-            df["Embarked"] = le_embarked.transform(df["Embarked"])
-            df["Title"] = le_title.transform(df["Title"])
+            # Crear array para predicción (en el mismo orden que se entrenó el modelo)
+            passenger_features = [
+                data['Pclass'],
+                sex_encoded,
+                data['Age'],
+                data['SibSp'],
+                data['Parch'],
+                fare,
+                embarked_encoded,
+                family_size,
+                is_alone,
+                title_encoded
+            ]
             
             # Escalar y predecir
-            data_scaled = scaler.transform(df)
+            data_scaled = scaler.transform([passenger_features])
             pred = model.predict(data_scaled)[0]
             
             resultado = "🟢 Sobrevive" if pred == 1 else "🔴 No sobrevive"
