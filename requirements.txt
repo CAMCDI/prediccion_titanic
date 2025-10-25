@@ -1,3 +1,6 @@
 Django==4.2.7
-joblib==1.2.0
 gunicorn==20.1.0
+joblib==1.2.0
+scikit-learn==1.0.2 --only-binary=scikit-learn
+numpy==1.21.6 --only-binary=numpy
+whitenoise==6.4.0

@@ -75,9 +75,33 @@ STATICFILES_DIRS = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-# Configuración para producción
+# Configuración para producción en Render
 import os
-from pathlib import Path
 
-# ... tus configuraciones actuales ...
+# Configuración de archivos estáticos
+if 'RENDER' in os.environ:
+    DEBUG = False
+    ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+    
+    # Configuración para archivos estáticos
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    
+    # Middleware para servir archivos estáticos
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'whitenoise.middleware.WhiteNoiseMiddleware',  # ← AGREGAR ESTO
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    ]
+    
+    # Configuración de WhiteNoise
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    DEBUG = True
+    ALLOWED_HOSTS = []
+
 
