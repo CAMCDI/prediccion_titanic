@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 import pandas as pd
 import joblib
 import json
@@ -54,7 +51,7 @@ class PredictView(View):
                 if field not in data:
                     return JsonResponse({"error": f"Campo requerido faltante: {field}"}, status=400)
             
-            # Asignar Fare basado en Pclass (igual que en FastAPI)
+            # Asignar Fare basado en Pclass
             fares_by_class = {1: 512, 2: 100, 3: 50}
             fare = fares_by_class[data['Pclass']]
             
