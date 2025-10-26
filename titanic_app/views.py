@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.conf import settings
 
-# Cargar modelos una vez
+
 try:
     model_path = os.path.join(settings.BASE_DIR, 'models', 'model_titanic.pkl')
     scaler_path = os.path.join(settings.BASE_DIR, 'models', 'scaler.pkl')
@@ -42,24 +42,23 @@ class PredictView(View):
             return JsonResponse({"error": "Modelos no cargados correctamente"}, status=500)
         
         try:
-            # Parsear JSON
+           
             data = json.loads(request.body)
             
-            # Validar campos requeridos
+           
             required_fields = ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Embarked', 'Title']
             for field in required_fields:
                 if field not in data:
                     return JsonResponse({"error": f"Campo requerido faltante: {field}"}, status=400)
             
-            # Asignar Fare basado en Pclass
+         
             fares_by_class = {1: 512, 2: 100, 3: 50}
             fare = fares_by_class[data['Pclass']]
             
-            # Calcular FamilySize e IsAlone
+         
             family_size = data['SibSp'] + data['Parch'] + 1
             is_alone = 1 if family_size == 1 else 0
             
-            # Crear DataFrame para predicción
             passenger_data = {
                 'Pclass': [data['Pclass']],
                 'Sex': [data['Sex']],
@@ -75,12 +74,12 @@ class PredictView(View):
             
             df = pd.DataFrame(passenger_data)
             
-            # Transformar variables categóricas
+           
             df["Sex"] = le_sex.transform(df["Sex"])
             df["Embarked"] = le_embarked.transform(df["Embarked"])
             df["Title"] = le_title.transform(df["Title"])
             
-            # Escalar y predecir
+          
             data_scaled = scaler.transform(df)
             pred = model.predict(data_scaled)[0]
             

@@ -5,18 +5,17 @@ Django settings for titanic_project project.
 import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = 'django-insecure-tu-clave-secreta-aqui'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,7 +28,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← AGREGAR SIEMPRE
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -58,7 +57,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'titanic_project.wsgi.application'
 
-# Database
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -66,24 +65,24 @@ DATABASES = {
     }
 }
 
-# Static files (CSS, JavaScript, Images)
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# Configuración para producción en Render
+
 if 'RENDER' in os.environ:
     DEBUG = False
     ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
     
-    # Directorio donde se recogen los archivos estáticos para producción
+   
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     
-    # Configuración de WhiteNoise para archivos estáticos
+ 
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     
-    # Para logging de errores
+   
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
@@ -101,5 +100,4 @@ else:
     DEBUG = True
     ALLOWED_HOSTS = []
 
-# Para permitir CORS
 CORS_ALLOW_ALL_ORIGINS = True

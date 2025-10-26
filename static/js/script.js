@@ -5,12 +5,11 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
     const btnText = submitBtn.querySelector('.btn-text');
     const btnLoading = submitBtn.querySelector('.btn-loading');
     
-    // Mostrar loading
     btnText.style.display = 'none';
     btnLoading.style.display = 'block';
     submitBtn.disabled = true;
     
-    // Obtener datos del formulario
+    
     const formData = {
         Pclass: parseInt(document.getElementById('Pclass').value),
         Sex: document.getElementById('Sex').value,
@@ -36,13 +35,13 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
             throw new Error(data.error || 'Error en la predicción');
         }
         
-        // Mostrar resultado
+        
         showResult(data.prediction);
         
     } catch (error) {
-        alert('❌ Error: ' + error.message);
+        alert(' Error: ' + error.message);
     } finally {
-        // Ocultar loading
+        
         btnText.style.display = 'block';
         btnLoading.style.display = 'none';
         submitBtn.disabled = false;
@@ -53,7 +52,7 @@ function showResult(prediction) {
     const resultDiv = document.getElementById('result');
     const predictionText = document.getElementById('predictionText');
     
-    // Estilizar según el resultado
+   
     if (prediction.includes('Sobrevive')) {
         predictionText.innerHTML = ' ' + prediction;
         predictionText.style.color = '#2e7d32';
@@ -74,11 +73,11 @@ function resetForm() {
     document.getElementById('predictionForm').reset();
     document.getElementById('result').style.display = 'none';
     
-    // Scroll to top
+   
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Efectos interactivos adicionales
+
 document.querySelectorAll('input, select').forEach(element => {
     element.addEventListener('focus', function() {
         this.parentElement.style.transform = 'translateY(-5px)';
@@ -89,7 +88,7 @@ document.querySelectorAll('input, select').forEach(element => {
     });
 });
 
-// Efecto de partículas simples en el fondo
+
 function createParticle() {
     const particle = document.createElement('div');
     particle.style.cssText = `
@@ -103,11 +102,11 @@ function createParticle() {
     `;
     document.body.appendChild(particle);
     
-    // Posición aleatoria
+  
     particle.style.left = Math.random() * 100 + 'vw';
     particle.style.top = '100vh';
     
-    // Animación
+  
     const animation = particle.animate([
         { transform: 'translateY(0) scale(1)', opacity: 0.7 },
         { transform: `translateY(-${window.innerHeight + 100}px) scale(0.5)`, opacity: 0 }
@@ -119,5 +118,5 @@ function createParticle() {
     animation.onfinish = () => particle.remove();
 }
 
-// Crear partículas periódicamente
+
 setInterval(createParticle, 500);

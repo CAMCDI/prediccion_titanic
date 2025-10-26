@@ -19,5 +19,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('titanic_app.urls')),  # ← INCLUIR LAS URLs DE TU APP
+    path('', include('titanic_app.urls')), 
 ]
